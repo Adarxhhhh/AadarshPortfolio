@@ -37,13 +37,12 @@ const sprinkleThemeSparkles = () => {
     const x = Math.random() * w;
     const y = Math.random() * h;
 
-    const size = 3 + Math.random() * 5; // tiny sparkles
+    const size = 3 + Math.random() * 5; // tiny
     const delay = Math.random() * 180;
     const dur = 750 + Math.random() * 650;
 
     const tx = (Math.random() - 0.5) * 80;
     const ty = 40 + Math.random() * 140;
-
     const rot = Math.floor(Math.random() * 360);
 
     star.style.left = `${x}px`;
@@ -103,22 +102,82 @@ internalLinks.forEach((link) => {
   });
 });
 
-// Education flip cards
+/* ===== Education flip cards (dynamic height) ===== */
 const flipCards = document.querySelectorAll(".flip-card");
+
+const measureFaceHeight = (card, faceSelector) => {
+  const inner = card.querySelector(".flip-inner");
+  const face = card.querySelector(faceSelector);
+  if (!inner || !face) return 300;
+
+  const width = inner.getBoundingClientRect().width || card.getBoundingClientRect().width || 320;
+
+  const clone = face.cloneNode(true);
+  clone.style.position = "absolute";
+  clone.style.visibility = "hidden";
+  clone.style.pointerEvents = "none";
+  clone.style.transform = "none";
+  clone.style.inset = "auto";
+  clone.style.left = "-9999px";
+  clone.style.top = "0";
+  clone.style.width = `${width}px`;
+  clone.style.height = "auto";
+  clone.style.maxHeight = "none";
+  clone.style.overflow = "visible";
+  clone.style.backfaceVisibility = "visible";
+
+  document.body.appendChild(clone);
+  const h = Math.ceil(clone.getBoundingClientRect().height);
+  clone.remove();
+
+  return Math.max(h, 260);
+};
+
+const computeAndStoreHeights = (card) => {
+  const frontH = measureFaceHeight(card, ".flip-front");
+  const backH = measureFaceHeight(card, ".flip-back");
+  card.dataset.frontH = String(frontH);
+  card.dataset.backH = String(backH);
+};
+
+const syncCardHeight = (card) => {
+  const inner = card.querySelector(".flip-inner");
+  if (!inner) return;
+
+  const isFlipped = card.classList.contains("is-flipped");
+  const frontH = Number(card.dataset.frontH || 300);
+  const backH = Number(card.dataset.backH || 340);
+
+  inner.style.setProperty("--cardH", `${isFlipped ? backH : frontH}px`);
+};
+
 flipCards.forEach((card) => {
+  computeAndStoreHeights(card);
+  syncCardHeight(card);
+
   const toggleFlip = () => {
     card.classList.toggle("is-flipped");
     const pressed = card.getAttribute("aria-pressed") === "true";
     card.setAttribute("aria-pressed", String(!pressed));
+
+    // after flip starts, update to the other side's height
+    requestAnimationFrame(() => syncCardHeight(card));
   };
 
   card.addEventListener("click", toggleFlip);
 
-  // Optional: Escape to flip back when focused
   card.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && card.classList.contains("is-flipped")) {
       e.preventDefault();
       toggleFlip();
     }
+  });
+});
+
+// Keep heights correct on resize / orientation
+window.addEventListener("resize", () => {
+  flipCards.forEach((card) => {
+    computeAndStoreHeights(card);
+    syncCardHeight(card);
   });
 });

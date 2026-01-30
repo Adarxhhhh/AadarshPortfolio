@@ -97,7 +97,6 @@ img {
   object-fit: cover;
 }
 
-/* Right-aligned nav links + toggle */
 .nav-right {
   margin-left: auto;
   display: flex;
@@ -278,7 +277,7 @@ img {
   font-weight: 600;
 }
 
-/* Experience (structured + logos + chips) */
+/* Experience */
 .exp-card {
   padding: 22px;
 }
@@ -345,40 +344,33 @@ img {
   margin-top: 2px;
 }
 
-/* Education grid */
+/* ===== Education flip cards (centered + dynamic height) ===== */
 .education-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
 
-/* Flip card base (button) */
 .education-card {
   background: transparent;
   padding: 0;
   border: none;
-  text-align: left;
+  text-align: center;
 }
 
-/* 3D flip */
 .flip-card {
   perspective: 1200px;
   outline: none;
-}
-
-.flip-card:focus-visible .flip-front,
-.flip-card:focus-visible .flip-back {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent),
-    0 12px 40px rgba(27, 25, 34, 0.08);
 }
 
 .flip-inner {
   position: relative;
   display: block;
   width: 100%;
-  min-height: 290px;
+  height: var(--cardH, 300px);
   transform-style: preserve-3d;
-  transition: transform 700ms cubic-bezier(0.2, 0.75, 0.2, 1);
+  transition: transform 700ms cubic-bezier(0.2, 0.75, 0.2, 1),
+    height 320ms ease;
 }
 
 .flip-card.is-flipped .flip-inner {
@@ -392,10 +384,15 @@ img {
   border: 1px solid var(--border);
   background: var(--surface);
   box-shadow: 0 10px 28px rgba(27, 25, 34, 0.06);
-  padding: 24px;
-  display: grid;
-  gap: 6px;
+  padding: 22px;
   backface-visibility: hidden;
+  overflow: hidden;
+
+  /* Center contents */
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
 }
 
 .flip-front {
@@ -423,6 +420,7 @@ img {
 }
 
 .flip-back-header {
+  width: 100%;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -430,20 +428,25 @@ img {
 }
 
 .course-list {
+  width: 100%;
   list-style: none;
   display: grid;
   gap: 10px;
   padding-left: 0;
+  margin-top: 6px;
 }
 
 .course-list li {
-  padding: 10px 12px;
+  width: 100%;
+  max-width: 420px;
+  padding: 9px 12px; /* smaller pills to fit */
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
   color: var(--ink);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 650;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 /* Projects */
@@ -463,12 +466,39 @@ img {
   gap: 12px;
 }
 
+/* Status pill + dot */
 .project-status {
-  display: inline-block;
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+  font-size: 0.78rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.14em;
   color: var(--muted);
+}
+
+.project-status::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--status, #f59e0b);
+  box-shadow: 0 0 0 4px
+    color-mix(in srgb, var(--status, #f59e0b) 25%, transparent);
+}
+
+.project-status.status-progress {
+  --status: #f59e0b; /* orange */
+}
+
+.project-status.status-live {
+  --status: #22c55e; /* green */
 }
 
 /* Skills */
@@ -549,20 +579,14 @@ img {
   fill: white;
 }
 
-/* Footer */
+/* Footer (no bottom links) */
 .footer {
   border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   padding: 32px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;
   color: var(--muted);
-}
-
-.footer-links {
-  display: flex;
-  gap: 16px;
+  text-align: center;
 }
 
 /* Responsive */
@@ -608,11 +632,6 @@ img {
     padding: 48px 20px;
   }
 
-  .footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .exp-header {
     align-items: flex-start;
   }
@@ -624,12 +643,17 @@ img {
     padding: 8px;
   }
 
-  .flip-inner {
-    min-height: 310px;
+  .flip-face {
+    padding: 18px;
+  }
+
+  .course-list li {
+    padding: 8px 10px;
+    font-size: 0.88rem;
   }
 }
 
-/* ===== Tiny background sparkles on theme switch ===== */
+/* ===== Tiny background sparkles on theme switch (stars) ===== */
 .sparkle-layer {
   position: fixed;
   inset: 0;
