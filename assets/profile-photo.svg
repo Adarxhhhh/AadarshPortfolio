@@ -1,7 +1,0 @@
-<svg width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="320" height="320" rx="64" fill="#D9D6F5" />
-  <rect x="24" y="24" width="272" height="272" rx="56" fill="#B9C3F5" />
-  <circle cx="160" cy="120" r="56" fill="#F9F9FC" />
-  <path d="M88 256C102 210 128 186 160 186C192 186 218 210 232 256" fill="#F9F9FC" />
-  <text x="160" y="292" text-anchor="middle" fill="#2D2B36" font-family="Plus Jakarta Sans, sans-serif" font-size="22" font-weight="600">Aadarsh</text>
-</svg>
