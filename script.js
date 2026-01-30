@@ -1,7 +1,7 @@
 const root = document.documentElement;
 const toggleButton = document.querySelector(".theme-toggle");
 const themeIcon = document.querySelector(".theme-icon");
-const themeLabel = document.querySelector(".theme-label");
+const themeToggle = document.querySelector(".theme-toggle");
 
 const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -10,9 +10,6 @@ const applyTheme = (theme) => {
   const isDark = theme === "dark";
   if (themeIcon) {
     themeIcon.textContent = isDark ? "☀️" : "🌙";
-  }
-  if (themeLabel) {
-    themeLabel.textContent = isDark ? "Light mode" : "Dark mode";
   }
 };
 
@@ -29,6 +26,14 @@ if (toggleButton) {
       root.getAttribute("data-theme") === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
     localStorage.setItem("theme", nextTheme);
+    if (themeToggle) {
+      const sparkle = document.createElement("span");
+      sparkle.classList.add("sparkle");
+      themeToggle.appendChild(sparkle);
+      sparkle.addEventListener("animationend", () => {
+        sparkle.remove();
+      });
+    }
   });
 }
 
