@@ -21,51 +21,46 @@ const ensureSparkleLayer = () => {
   return layer;
 };
 
-const pulseToggle = () => {
-  if (!themeToggle || reduceMotion.matches) return;
-
-  const sparkle = document.createElement("span");
-  sparkle.classList.add("sparkle");
-  themeToggle.appendChild(sparkle);
-  sparkle.addEventListener("animationend", () => sparkle.remove());
-};
-
-const burstSparkles = () => {
-  if (!themeToggle || reduceMotion.matches) return;
+const sprinkleThemeSparkles = () => {
+  if (reduceMotion.matches) return;
 
   const layer = ensureSparkleLayer();
-  const rect = themeToggle.getBoundingClientRect();
-  const originX = rect.left + rect.width / 2;
-  const originY = rect.top + rect.height / 2;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
 
-  const count = 22;
+  const count = w < 640 ? 45 : 70;
 
   for (let i = 0; i < count; i++) {
-    const s = document.createElement("span");
-    s.className = "sparkle-particle";
+    const star = document.createElement("span");
+    star.className = "sparkle-star";
 
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 120 + Math.random() * 180;
-    const tx = Math.cos(angle) * distance;
-    const ty = Math.sin(angle) * distance;
+    const x = Math.random() * w;
+    const y = Math.random() * h;
 
-    const size = 6 + Math.random() * 10;
-    const delay = Math.random() * 120;
-    const dur = 650 + Math.random() * 450;
+    const size = 3 + Math.random() * 5; // tiny sparkles
+    const delay = Math.random() * 180;
+    const dur = 750 + Math.random() * 650;
 
-    s.style.left = `${originX}px`;
-    s.style.top = `${originY}px`;
-    s.style.setProperty("--tx", `${tx}px`);
-    s.style.setProperty("--ty", `${ty}px`);
-    s.style.setProperty("--size", `${size}px`);
-    s.style.setProperty("--delay", `${delay}ms`);
-    s.style.setProperty("--dur", `${dur}ms`);
+    const tx = (Math.random() - 0.5) * 80;
+    const ty = 40 + Math.random() * 140;
 
-    layer.appendChild(s);
-    s.addEventListener("animationend", () => s.remove());
+    const rot = Math.floor(Math.random() * 360);
+
+    star.style.left = `${x}px`;
+    star.style.top = `${y}px`;
+    star.style.setProperty("--size", `${size}px`);
+    star.style.setProperty("--delay", `${delay}ms`);
+    star.style.setProperty("--dur", `${dur}ms`);
+    star.style.setProperty("--tx", `${tx}px`);
+    star.style.setProperty("--ty", `${ty}px`);
+    star.style.setProperty("--rot", `${rot}deg`);
+
+    layer.appendChild(star);
+    star.addEventListener("animationend", () => star.remove());
   }
 };
 
+// Theme init
 const storedTheme = localStorage.getItem("theme");
 if (storedTheme) {
   applyTheme(storedTheme);
@@ -73,6 +68,7 @@ if (storedTheme) {
   applyTheme(prefersDark.matches ? "dark" : "light");
 }
 
+// Toggle theme
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     const nextTheme =
@@ -81,17 +77,18 @@ if (themeToggle) {
     applyTheme(nextTheme);
     localStorage.setItem("theme", nextTheme);
 
-    pulseToggle();
-    burstSparkles();
+    sprinkleThemeSparkles();
   });
 }
 
+// OS theme change (only if user hasn't chosen manually)
 prefersDark.addEventListener("change", (event) => {
   if (!localStorage.getItem("theme")) {
     applyTheme(event.matches ? "dark" : "light");
   }
 });
 
+// Smooth in-page navigation
 const internalLinks = document.querySelectorAll('a[href^="#"]');
 internalLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
@@ -102,6 +99,26 @@ internalLinks.forEach((link) => {
     if (target) {
       event.preventDefault();
       target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+});
+
+// Education flip cards
+const flipCards = document.querySelectorAll(".flip-card");
+flipCards.forEach((card) => {
+  const toggleFlip = () => {
+    card.classList.toggle("is-flipped");
+    const pressed = card.getAttribute("aria-pressed") === "true";
+    card.setAttribute("aria-pressed", String(!pressed));
+  };
+
+  card.addEventListener("click", toggleFlip);
+
+  // Optional: Escape to flip back when focused
+  card.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && card.classList.contains("is-flipped")) {
+      e.preventDefault();
+      toggleFlip();
     }
   });
 });
