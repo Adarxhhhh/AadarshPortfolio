@@ -10,6 +10,7 @@ const applyTheme = (theme) => {
   if (themeIcon) themeIcon.textContent = isDark ? "☀️" : "🌙";
 };
 
+/* ===== Sparkle stars on theme switch ===== */
 const ensureSparkleLayer = () => {
   let layer = document.querySelector(".sparkle-layer");
   if (!layer) {
@@ -27,7 +28,6 @@ const sprinkleThemeSparkles = () => {
   const layer = ensureSparkleLayer();
   const w = window.innerWidth;
   const h = window.innerHeight;
-
   const count = w < 640 ? 45 : 70;
 
   for (let i = 0; i < count; i++) {
@@ -37,7 +37,7 @@ const sprinkleThemeSparkles = () => {
     const x = Math.random() * w;
     const y = Math.random() * h;
 
-    const size = 3 + Math.random() * 5; // tiny
+    const size = 3 + Math.random() * 5;
     const delay = Math.random() * 180;
     const dur = 750 + Math.random() * 650;
 
@@ -59,7 +59,7 @@ const sprinkleThemeSparkles = () => {
   }
 };
 
-// Theme init
+/* ===== Theme init ===== */
 const storedTheme = localStorage.getItem("theme");
 if (storedTheme) {
   applyTheme(storedTheme);
@@ -67,7 +67,6 @@ if (storedTheme) {
   applyTheme(prefersDark.matches ? "dark" : "light");
 }
 
-// Toggle theme
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     const nextTheme =
@@ -75,21 +74,18 @@ if (themeToggle) {
 
     applyTheme(nextTheme);
     localStorage.setItem("theme", nextTheme);
-
     sprinkleThemeSparkles();
   });
 }
 
-// OS theme change (only if user hasn't chosen manually)
 prefersDark.addEventListener("change", (event) => {
   if (!localStorage.getItem("theme")) {
     applyTheme(event.matches ? "dark" : "light");
   }
 });
 
-// Smooth in-page navigation
-const internalLinks = document.querySelectorAll('a[href^="#"]');
-internalLinks.forEach((link) => {
+/* ===== Smooth in-page navigation ===== */
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
     const targetId = link.getAttribute("href");
     if (!targetId || targetId === "#") return;
@@ -102,18 +98,21 @@ internalLinks.forEach((link) => {
   });
 });
 
-/* ===== Education flip cards (dynamic height) ===== */
+/* ===== Education flip cards (uniform size across all cards) ===== */
 const flipCards = document.querySelectorAll(".flip-card");
 
 const measureFaceHeight = (card, faceSelector) => {
   const inner = card.querySelector(".flip-inner");
   const face = card.querySelector(faceSelector);
-  if (!inner || !face) return 300;
+  if (!inner || !face) return 320;
 
-  const width = inner.getBoundingClientRect().width || card.getBoundingClientRect().width || 320;
+  const width =
+    inner.getBoundingClientRect().width ||
+    card.getBoundingClientRect().width ||
+    320;
 
   const clone = face.cloneNode(true);
-  clone.style.position = "absolute";
+  clone.style.position = "relative";
   clone.style.visibility = "hidden";
   clone.style.pointerEvents = "none";
   clone.style.transform = "none";
@@ -130,38 +129,31 @@ const measureFaceHeight = (card, faceSelector) => {
   const h = Math.ceil(clone.getBoundingClientRect().height);
   clone.remove();
 
-  return Math.max(h, 260);
+  return Math.max(h, 320);
 };
 
-const computeAndStoreHeights = (card) => {
-  const frontH = measureFaceHeight(card, ".flip-front");
-  const backH = measureFaceHeight(card, ".flip-back");
-  card.dataset.frontH = String(frontH);
-  card.dataset.backH = String(backH);
-};
+const setUniformEducationHeight = () => {
+  if (!flipCards.length) return;
 
-const syncCardHeight = (card) => {
-  const inner = card.querySelector(".flip-inner");
-  if (!inner) return;
+  let maxH = 320;
 
-  const isFlipped = card.classList.contains("is-flipped");
-  const frontH = Number(card.dataset.frontH || 300);
-  const backH = Number(card.dataset.backH || 340);
+  flipCards.forEach((card) => {
+    const frontH = measureFaceHeight(card, ".flip-front");
+    const backH = measureFaceHeight(card, ".flip-back");
+    maxH = Math.max(maxH, frontH, backH);
+  });
 
-  inner.style.setProperty("--cardH", `${isFlipped ? backH : frontH}px`);
+  flipCards.forEach((card) => {
+    const inner = card.querySelector(".flip-inner");
+    if (inner) inner.style.setProperty("--cardH", `${maxH}px`);
+  });
 };
 
 flipCards.forEach((card) => {
-  computeAndStoreHeights(card);
-  syncCardHeight(card);
-
   const toggleFlip = () => {
     card.classList.toggle("is-flipped");
     const pressed = card.getAttribute("aria-pressed") === "true";
     card.setAttribute("aria-pressed", String(!pressed));
-
-    // after flip starts, update to the other side's height
-    requestAnimationFrame(() => syncCardHeight(card));
   };
 
   card.addEventListener("click", toggleFlip);
@@ -174,10 +166,5 @@ flipCards.forEach((card) => {
   });
 });
 
-// Keep heights correct on resize / orientation
-window.addEventListener("resize", () => {
-  flipCards.forEach((card) => {
-    computeAndStoreHeights(card);
-    syncCardHeight(card);
-  });
-});
+setUniformEducationHeight();
+window.addEventListener("resize", setUniformEducationHeight);
