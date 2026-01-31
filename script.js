@@ -28,7 +28,9 @@ const sprinkleThemeSparkles = () => {
   const layer = ensureSparkleLayer();
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const count = w < 640 ? 45 : 70;
+
+  // slightly higher = more visible (still safe)
+  const count = w < 640 ? 60 : 95;
 
   for (let i = 0; i < count; i++) {
     const star = document.createElement("span");
@@ -37,12 +39,12 @@ const sprinkleThemeSparkles = () => {
     const x = Math.random() * w;
     const y = Math.random() * h;
 
-    const size = 3 + Math.random() * 5;
+    const size = 4 + Math.random() * 6;
     const delay = Math.random() * 180;
     const dur = 750 + Math.random() * 650;
 
-    const tx = (Math.random() - 0.5) * 80;
-    const ty = 40 + Math.random() * 140;
+    const tx = (Math.random() - 0.5) * 90;
+    const ty = 55 + Math.random() * 170;
     const rot = Math.floor(Math.random() * 360);
 
     star.style.left = `${x}px`;
