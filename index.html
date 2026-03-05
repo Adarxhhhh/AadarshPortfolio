@@ -3,8 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Aadarsh Katigi · Portfolio</title>
+    <title>Aadarsh Katigi · Software Engineer</title>
 
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Aadarsh Katigi — Software Engineer specializing in distributed systems, cloud infrastructure, and AI-driven applications. Currently at BNY."
+    />
+    <meta
+      name="keywords"
+      content="Aadarsh Katigi, Software Engineer, Full Stack Developer, Distributed Systems, AWS, Java, Python, React, Portfolio"
+    />
+    <meta name="author" content="Aadarsh Katigi" />
+    <link rel="canonical" href="https://aadarshkatigi.com" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Aadarsh Katigi · Software Engineer" />
+    <meta
+      property="og:description"
+      content="Software Engineer building scalable distributed systems and AI-driven applications. Currently at BNY."
+    />
+    <meta property="og:image" content="assets/profile-photo.jpg" />
+    <meta property="og:url" content="https://aadarshkatigi.com" />
+    <meta property="og:site_name" content="Aadarsh Katigi Portfolio" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@katigi_adarsh" />
+    <meta name="twitter:title" content="Aadarsh Katigi · Software Engineer" />
+    <meta
+      name="twitter:description"
+      content="Software Engineer building scalable distributed systems and AI-driven applications."
+    />
+    <meta name="twitter:image" content="assets/profile-photo.jpg" />
+
+    <!-- Favicons -->
     <link rel="icon" href="assets/favicon.ico" />
     <link
       rel="icon"
@@ -20,16 +54,26 @@
     />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 
-    <link rel="stylesheet" href="styles.css" />
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/profile-photo.jpg" as="image" />
+    <link rel="preload" href="components/header.html" as="fetch" crossorigin />
+    <link rel="preload" href="components/hero.html" as="fetch" crossorigin />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
+    <!-- Skip to content for keyboard users -->
+    <a href="#about" class="skip-link">Skip to main content</a>
+
     <div id="header-container"></div>
 
     <main id="top">
@@ -42,6 +86,27 @@
     </main>
 
     <div id="footer-container"></div>
+
+    <!-- No-JS fallback -->
+    <noscript>
+      <style>
+        #header-container, #hero-container, #experience-container,
+        #education-container, #projects-container, #skills-container,
+        #contact-container, #footer-container { display: none; }
+      </style>
+      <div style="max-width: 700px; margin: 80px auto; padding: 32px; text-align: center; font-family: system-ui, sans-serif;">
+        <h1>Aadarsh Katigi</h1>
+        <p style="margin: 16px 0; color: #666;">Software Engineer · Distributed Systems · AI-Driven Applications</p>
+        <p style="margin: 16px 0;">
+          This portfolio requires JavaScript to load. Please enable JavaScript or visit my profiles directly:
+        </p>
+        <p style="margin: 12px 0;">
+          <a href="https://www.linkedin.com/in/aadarsh-katigi/" style="color: #0077b5; margin: 0 12px;">LinkedIn</a>
+          <a href="https://github.com/Adarxhhhh" style="color: #333; margin: 0 12px;">GitHub</a>
+          <a href="mailto:katigiaadarshm@gmail.com" style="color: #d14836; margin: 0 12px;">Email</a>
+        </p>
+      </div>
+    </noscript>
 
     <script src="script.js"></script>
   </body>

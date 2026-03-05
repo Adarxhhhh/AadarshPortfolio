@@ -1,3 +1,14 @@
+/* ===== Constants ===== */
+const BREAKPOINT_MOBILE = 640;
+const SPARKLE_COUNT_MOBILE = 60;
+const SPARKLE_COUNT_DESKTOP = 95;
+const SPARKLE_MIN_SIZE = 4;
+const SPARKLE_SIZE_RANGE = 6;
+const SPARKLE_MAX_DELAY = 180;
+const SPARKLE_BASE_DURATION = 750;
+const SPARKLE_DURATION_RANGE = 650;
+const FLIP_CARD_MIN_HEIGHT = 320;
+
 const root = document.documentElement;
 const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -5,9 +16,14 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const applyTheme = (theme) => {
   root.setAttribute("data-theme", theme);
 
-  const themeIcon = document.querySelector(".theme-icon");
+  const moonIcon = document.querySelector(".theme-icon-moon");
+  const sunIcon = document.querySelector(".theme-icon-sun");
   const isDark = theme === "dark";
-  if (themeIcon) themeIcon.textContent = isDark ? "☀️" : "🌙";
+
+  if (moonIcon && sunIcon) {
+    moonIcon.style.display = isDark ? "none" : "block";
+    sunIcon.style.display = isDark ? "block" : "none";
+  }
 };
 
 /* ===== Sparkle stars on theme switch ===== */
@@ -29,8 +45,7 @@ const sprinkleThemeSparkles = () => {
   const w = window.innerWidth;
   const h = window.innerHeight;
 
-  // slightly higher = more visible (still safe)
-  const count = w < 640 ? 60 : 95;
+  const count = w < BREAKPOINT_MOBILE ? SPARKLE_COUNT_MOBILE : SPARKLE_COUNT_DESKTOP;
 
   for (let i = 0; i < count; i++) {
     const star = document.createElement("span");
@@ -39,9 +54,9 @@ const sprinkleThemeSparkles = () => {
     const x = Math.random() * w;
     const y = Math.random() * h;
 
-    const size = 4 + Math.random() * 6;
-    const delay = Math.random() * 180;
-    const dur = 750 + Math.random() * 650;
+    const size = SPARKLE_MIN_SIZE + Math.random() * SPARKLE_SIZE_RANGE;
+    const delay = Math.random() * SPARKLE_MAX_DELAY;
+    const dur = SPARKLE_BASE_DURATION + Math.random() * SPARKLE_DURATION_RANGE;
 
     const tx = (Math.random() - 0.5) * 90;
     const ty = 55 + Math.random() * 170;
@@ -115,12 +130,12 @@ const initEducationFlipCards = () => {
   const measureFaceHeight = (card, faceSelector) => {
     const inner = card.querySelector(".flip-inner");
     const face = card.querySelector(faceSelector);
-    if (!inner || !face) return 320;
+    if (!inner || !face) return FLIP_CARD_MIN_HEIGHT;
 
     const width =
       inner.getBoundingClientRect().width ||
       card.getBoundingClientRect().width ||
-      320;
+      FLIP_CARD_MIN_HEIGHT;
 
     const clone = face.cloneNode(true);
     clone.style.position = "relative";
@@ -140,11 +155,11 @@ const initEducationFlipCards = () => {
     const h = Math.ceil(clone.getBoundingClientRect().height);
     clone.remove();
 
-    return Math.max(h, 320);
+    return Math.max(h, FLIP_CARD_MIN_HEIGHT);
   };
 
   const setUniformEducationHeight = () => {
-    let maxH = 320;
+    let maxH = FLIP_CARD_MIN_HEIGHT;
 
     flipCards.forEach((card) => {
       const frontH = measureFaceHeight(card, ".flip-front");
@@ -168,6 +183,10 @@ const initEducationFlipCards = () => {
     card.addEventListener("click", toggleFlip);
 
     card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleFlip();
+      }
       if (e.key === "Escape" && card.classList.contains("is-flipped")) {
         e.preventDefault();
         toggleFlip();
@@ -177,6 +196,46 @@ const initEducationFlipCards = () => {
 
   setUniformEducationHeight();
   window.addEventListener("resize", setUniformEducationHeight);
+};
+
+/* ===== Contact form handling ===== */
+const initContactForm = () => {
+  const form = document.querySelector(".contact-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector(".btn-submit");
+    const originalText = btn.innerHTML;
+
+    btn.innerHTML = "Sending...";
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        btn.innerHTML = "Sent!";
+        form.reset();
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 3000);
+      } else {
+        throw new Error("Form submission failed");
+      }
+    } catch {
+      btn.innerHTML = "Error — Try again";
+      btn.disabled = false;
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+      }, 3000);
+    }
+  });
 };
 
 /* ===== Component loader ===== */
@@ -189,13 +248,21 @@ const loadComponent = async (selector, filePath) => {
     throw new Error(`Failed to load ${filePath} (${res.status})`);
   }
 
-  mount.innerHTML = await res.text();
+  const html = await res.text();
+  // Use insertAdjacentHTML instead of innerHTML for safer DOM insertion
+  mount.insertAdjacentHTML("beforeend", html);
 };
 
+/* ===== Prioritized component loading ===== */
 const loadAllComponents = async () => {
+  // Load above-fold content first (header + hero)
   await Promise.all([
     loadComponent("#header-container", "components/header.html"),
     loadComponent("#hero-container", "components/hero.html"),
+  ]);
+
+  // Then load remaining content
+  await Promise.all([
     loadComponent("#experience-container", "components/experience.html"),
     loadComponent("#education-container", "components/education.html"),
     loadComponent("#projects-container", "components/projects.html"),
@@ -211,6 +278,7 @@ const initPage = async () => {
     initThemeToggle();
     initSmoothNavigation();
     initEducationFlipCards();
+    initContactForm();
   } catch (error) {
     console.error("Component load error:", error);
   }

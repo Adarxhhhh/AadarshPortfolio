@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 · Page Not Found | Aadarsh Katigi</title>
+    <link rel="icon" href="assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        background: #efefef;
+        color: #1e1d22;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 32px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body { background: #1c1c21; color: #f1f1f4; }
+        .back-btn { background: #f1f1f4; color: #1c1c21; }
+      }
+
+      .error-page {
+        max-width: 520px;
+      }
+
+      .error-code {
+        font-size: clamp(5rem, 12vw, 8rem);
+        font-weight: 800;
+        line-height: 1;
+        opacity: 0.12;
+        margin-bottom: -20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+      }
+
+      p {
+        color: #5a5862;
+        margin-bottom: 28px;
+        line-height: 1.6;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 999px;
+        background: #1e1d22;
+        color: #efefef;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-page">
+      <div class="error-code">404</div>
+      <h1>Page not found</h1>
+      <p>
+        The page you're looking for doesn't exist or has been moved. Let's get
+        you back on track.
+      </p>
+      <a href="/" class="back-btn">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19 12H5M12 19l-7-7 7-7"
+          />
+        </svg>
+        Back to Portfolio
+      </a>
+    </div>
+  </body>
+</html>
